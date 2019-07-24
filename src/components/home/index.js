@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Image, View, TouchableOpacity, Dimensions } from 'react-native';
 import { Container,Content, Header,Segment, Body, Button, Text, Left, Icon, Right, Spinner } from 'native-base';
 import withFooter from '../../hoc/withFooter';
 import styles from './style';
@@ -8,11 +8,11 @@ import { pexelOps } from '../helpers/dataFetch';
 const Head = _ => {
     return   (
         <Header style={{backgroundColor: 'white', borderColor: 'white'}}>
-            <Left style={{float: 'left'}}>
+            {/* <Left style={{float: 'left'}}>
                 <Button transparent>
                     <Icon name="arrow-back" style={{color: 'black'}}/>
                 </Button>
-            </Left>  
+            </Left>   */}
             <Right >
                 <Button transparent >
                     <Icon name="search" style={{color: 'black'}}/>
@@ -21,6 +21,9 @@ const Head = _ => {
         </Header>
     );
 }
+
+const deviceWidth = Dimensions.get('window').width;
+
 
 class Home extends Component {
 
@@ -33,8 +36,9 @@ class Home extends Component {
                     };
     }
 
-    async componentWillMount() {
+    async UNSAFE_componentWillMount() {
         let res = await pexelOps.getPics('')
+        //setting state accordingly
         if ( res.length ) {
             this.setState(prevState => ({...prevState, photos: res, loading: false}));
         }
@@ -49,16 +53,35 @@ class Home extends Component {
         
     }
 
+    _renderItem = ({item}) => {
+        let {navigation} = this.props;
+        return (
+            <TouchableOpacity
+                onPress={() => navigation.navigate('Image',{ id: item.id })}
+            >
+                <View 
+                    style={styles.image}
+                >
+                    <Image
+                        style={styles.imageItem}
+                        source={{uri:item.src.medium}}
+                        resizeMode="cover"
+                    /> 
+                </View> 
+            </TouchableOpacity>   
+        );
+    }
+
     render() {
         let {abtn, loading, photos} = this.state;
 
-        if ( !loading ) {
+        if ( !loading && photos.length > 0 ) {
             return (
                 <Content style={styles.container}>
                     <Head />
                     <Segment style={styles.segment}>
                         <Button 
-                            style={{...styles.segment_btn, borderTopLeftRadius: 2, borderBottomLeftRadius: 2, backgroundColor: (abtn == 'photos' ? 'grey': 'blue')}}
+                            style={{...styles.segment_btn, borderTopLeftRadius: 2, borderBottomLeftRadius: 2, backgroundColor: (abtn == 'photos' ? 'green': 'grey')}}
                             onPress={() => this.fetchBooks('photos')}
                         >
                             <Text>
@@ -66,7 +89,7 @@ class Home extends Component {
                             </Text>
                         </Button>
                         <Button 
-                            style={{...styles.segment_btn, borderTopRightRadius: 2, borderBottomRightRadius: 2, backgroundColor: (abtn == 'videos' ? 'grey': 'blue')}}
+                            style={{...styles.segment_btn, borderTopRightRadius: 2, borderBottomRightRadius: 2, backgroundColor: (abtn == 'videos' ? 'green': 'grey')}}
                             onPress={() => this.fetchBooks('videos')}
                         >
                             <Text>
@@ -74,6 +97,14 @@ class Home extends Component {
                             </Text>
                         </Button>
                     </Segment> 
+                    <View style={styles.imageContainer}>
+                        <FlatList 
+                            numColumns={3}
+                            data={photos}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={this._renderItem}
+                        />
+                    </View>    
                 </Content>
             );
         }

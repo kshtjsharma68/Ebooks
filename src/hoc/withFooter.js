@@ -42,7 +42,7 @@ const withFooter = (props) => (Component) => {
        render(){
         return (
                 <Container>
-                    <Component />
+                    <Component {...this.props} />
                     <Foot {...props}/>
                 </Container>
         );
