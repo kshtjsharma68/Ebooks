@@ -1,6 +1,7 @@
 import React from 'react';
 import Home from './components/home';
 import LargeImage from './components/Image';
+import Chat from './components/Chat';
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 
 const Navigator = createStackNavigator({
@@ -9,6 +10,9 @@ const Navigator = createStackNavigator({
     },
     Image: {
         screen: LargeImage
+    },
+    Chat: {
+        screen: Chat
     }
 },
 //For making header invisible

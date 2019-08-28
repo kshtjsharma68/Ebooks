@@ -13,13 +13,18 @@ const style = StyleSheet.create({
 
 
 const Foot = props => {
+  let { navigation } = props; 
     return (
             <Footer>
                 <FooterTab>
-                    <Button vertical style={props.active == 'home' ? style.active : {}}>
+                    <Button vertical style={props.active == 'home' ? style.active : {}} onPress={() => navigation.navigate('Home')}>
                     <Icon name='ios-home' />
                     </Button>
-                    <Button vertical style={props.active == 'camera' ? style.active : {}}>
+                    <Button 
+                        vertical 
+                        style={props.active == 'Chat' ? style.active : {}}
+                        onPress={() => navigation.navigate('Chat')}
+                    >
                     <Icon name="camera" />
                     </Button>
                     <Button vertical style={props.active == 'navigate' ? style.active : {}}>
@@ -43,7 +48,7 @@ const withFooter = (props) => (Component) => {
         return (
                 <Container>
                     <Component {...this.props} />
-                    <Foot {...props}/>
+                    <Foot {...props} {...this.props}/>
                 </Container>
         );
        }
